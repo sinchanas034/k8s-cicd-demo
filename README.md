@@ -5,6 +5,6 @@
    ## Status
    - [x] Step 1: Tools installed (Docker, kubectl, kind)
    - [x] Step 2: App and Dockerfile working locally
-   - [ ] Step 3: Kubernetes cluster
+   - [x] Step 3: Kubernetes cluster
    - [ ] Step 4: Deployment and Service files
    - [ ] Step 5: GitHub Actions pipeline

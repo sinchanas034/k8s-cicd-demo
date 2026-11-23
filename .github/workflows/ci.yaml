@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t k8s-demo:1.0 .
+
+      - name: Create kind cluster
+        uses: helm/kind-action@v1
+        with:
+          cluster_name: demo
+
+      - name: Load image into the cluster
+        run: kind load docker-image k8s-demo:1.0 --name demo
+
+      - name: Deploy to Kubernetes
+        run: kubectl apply -f k8s/
+
+      - name: Wait for the app to be ready
+        run: kubectl rollout status deployment/k8s-demo --timeout=120s
+
+      - name: Test the app
+        run: |
+          kubectl port-forward svc/k8s-demo 8080:80 &
+          sleep 5
+          curl --fail http://localhost:8080/health
